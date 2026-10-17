@@ -1,0 +1,222 @@
+{
+ "story": {
+  "title": "Made to a standard",
+  "paras": [
+   "Most things on a desk are made to hit a price. We would rather make one thing well: a single mechanical key, built like the keyboards people spend hundreds on, and small enough to carry.",
+   "Every OneKey uses a real hot-swap switch, a real keycap, and materials chosen for how they sound and feel. Click it while you think. Carry it as a reminder of what a well-made object feels like.",
+   "OneKey is the first of many Key Bored desk objects."
+  ]
+ },
+ "extras": [
+  {
+   "id": "case",
+   "name": "Silicone case",
+   "price": 19,
+   "fits": [
+    "solid",
+    "screw",
+    "nested",
+    "stack"
+   ]
+  },
+  {
+   "id": "mat",
+   "name": "Cork desk mat",
+   "price": 24,
+   "fits": [
+    "solid",
+    "screw",
+    "nested",
+    "stack"
+   ]
+  },
+  {
+   "id": "tether",
+   "name": "Tether",
+   "price": 29,
+   "fits": [
+    "solid",
+    "screw"
+   ]
+  }
+ ],
+ "products": [
+  {
+   "id": "solid",
+   "name": "OneKey Solid",
+   "price": 39,
+   "default": {
+    "color": "orange"
+   },
+   "tagline": "One piece. One key. Pure click.",
+   "blurb": "Carved from a single piece of colored polycarbonate. The switch clicks straight into the body, with an open chamber underneath for a clean, crisp sound. A cream keycap is included.",
+   "points": [
+    "One solid body, nothing to loosen",
+    "Any MX-style switch, hot-swappable",
+    "Hidden NFC tag inside",
+    "Six colors"
+   ],
+   "specs": [
+    [
+     "Size",
+     "24.2 \u00d7 24.2 \u00d7 17.2 mm"
+    ],
+    [
+     "Weight",
+     "About 10 g"
+    ],
+    [
+     "Body",
+     "Polycarbonate"
+    ]
+   ]
+  },
+  {
+   "id": "screw",
+   "name": "OneKey Screw-in",
+   "price": 89,
+   "metalPrices": {
+    "brass": 89,
+    "stainless": 89,
+    "tungsten": 149
+   },
+   "default": {
+    "color": "azure",
+    "metal": "brass"
+   },
+   "tagline": "A metal heart in a color shell.",
+   "blurb": "A machined metal holster becomes the switch plate and the weight, screwed into brass inserts molded into the shell. Heavier, deeper, and serviceable for life. A cream keycap is included.",
+   "points": [
+    "Brass, stainless, or tungsten holster",
+    "Screws thread metal-into-metal",
+    "Air chamber tuned under the switch",
+    "Replaceable shell, the metal lasts forever"
+   ],
+   "specs": [
+    [
+     "Size",
+     "24.2 \u00d7 24.2 \u00d7 17.2 mm"
+    ],
+    [
+     "Weight",
+     "About 27 g (brass)"
+    ],
+    [
+     "Holster",
+     "Brass, stainless steel, or tungsten"
+    ],
+    [
+     "Hardware",
+     "Torx T3"
+    ]
+   ]
+  },
+  {
+   "id": "nested",
+   "name": "OneKey Nested",
+   "price": 129,
+   "default": {
+    "color": "cherry"
+   },
+   "tagline": "Machined aluminum. Solid brass inside.",
+   "blurb": "A one-piece brass weight slides up into an anodized aluminum case, held by four Torx screws. The seam hides under a 0.4 mm shoulder, so it reads as one object. A cream keycap is included.",
+   "points": [
+    "7075 aluminum case, anodized",
+    "C360 brass weight, 23 g",
+    "Torx hardware, no threads in aluminum",
+    "Brass across most of the underside"
+   ],
+   "specs": [
+    [
+     "Size",
+     "23.5 \u00d7 23.5 \u00d7 15 mm"
+    ],
+    [
+     "Weight",
+     "About 32 g"
+    ],
+    [
+     "Case",
+     "7075-T6 aluminum"
+    ],
+    [
+     "Weight insert",
+     "C360 brass"
+    ]
+   ]
+  },
+  {
+   "id": "stack",
+   "name": "OneKey Stack",
+   "price": 149,
+   "default": {
+    "color": "powder"
+   },
+   "tagline": "A brass core you can see.",
+   "blurb": "A full-width brass core with an aluminum sleeve dropped over it. The brass band shows along the bottom edge: the heaviest OneKey we make. A cream keycap is included.",
+   "points": [
+    "Visible brass band",
+    "Heaviest OneKey, about 34 g",
+    "Torx hardware",
+    "Anodized sleeve in six colors"
+   ],
+   "specs": [
+    [
+     "Size",
+     "23.5 \u00d7 23.5 \u00d7 15 mm"
+    ],
+    [
+     "Weight",
+     "About 34 g"
+    ],
+    [
+     "Core",
+     "C360 brass"
+    ],
+    [
+     "Sleeve",
+     "7075-T6 aluminum"
+    ]
+   ]
+  },
+  {
+   "id": "kb",
+   "name": "OneKey 75",
+   "price": 649,
+   "concept": true,
+   "default": {
+    "color": "tennis"
+   },
+   "tagline": "The whole keyboard, built the same way.",
+   "blurb": "One block of aluminum with a holster machined for every key, the circuit board right under the metal walls, and a brass base. No foam, no gaskets. Just heavy metal.",
+   "points": [
+    "Monoblock 7075 aluminum",
+    "A machined holster for every switch",
+    "5 mm brass base",
+    "About 2.9 kg"
+   ],
+   "specs": [
+    [
+     "Layout",
+     "75%, 84 keys"
+    ],
+    [
+     "Weight",
+     "About 2.9 kg"
+    ],
+    [
+     "Body",
+     "7075 aluminum, anodized"
+    ],
+    [
+     "Status",
+     "Concept"
+    ]
+   ]
+  }
+ ],
+ "preorder": {
+  "ship": "Spring 2027 (estimated)",
+  "note": "Every OneKey is made to order. Production starts after the pre-order window closes."
+ }
+}
