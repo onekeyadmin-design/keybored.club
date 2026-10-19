@@ -1,0 +1,20 @@
+# Key Bored
+
+> Key Bored makes desk objects one at a time. OneKey is a single mechanical key with a real switch and keycap.
+
+## Products
+- [KB OneKey](https://keybored.club/onekey/): One piece. One key. Pure click. $39, pre-order.
+- [KB OneKey Pro](https://keybored.club/onekey-pro/): Machined aluminum. Solid brass inside. $129, pre-order.
+
+## Journal
+- [What Is a Single-Key Mechanical Keyboard?](https://keybored.club/journal/single-key-mechanical-keyboard/): A single-key mechanical keyboard is one real keyboard switch and keycap in a small body, made to press, click, and carry. Here's what's inside and why people love them.
+- [Linear vs Tactile vs Clicky Switches: How Each One Feels](https://keybored.club/journal/linear-vs-tactile-vs-clicky-switches/): Linear switches are smooth, tactile switches have a bump, and clicky switches add an audible click. A plain-language guide to choosing the switch you'll like.
+- [Brass vs Aluminum: Why Weight Changes How a Key Sounds](https://keybored.club/journal/brass-vs-aluminum/): Brass is about three times as dense as aluminum. In a keyboard or a single key, that extra mass makes the sound deeper and the feel more solid. Here's why.
+- [How to Choose a Desk Fidget for Focus](https://keybored.club/journal/desk-fidget-for-focus/): The best desk fidget is one you'll actually reach for: quiet enough for where you work, solid enough to feel good, and small enough to keep nearby.
+- [What Is Anodized Aluminum? Color That Won't Chip](https://keybored.club/journal/anodized-aluminum-explained/): Anodizing grows a hard oxide layer out of aluminum itself, then dyes and seals it. The color becomes part of the surface, so it doesn't chip or peel like paint.
+- [Cherry Profile Keycaps Explained](https://keybored.club/journal/cherry-profile-keycaps/): Cherry profile keycaps are low and sculpted, with a cylindrical top that cradles your finger. Here's how they compare with OEM, SA, and flat profiles.
+- [How NFC Tags Work (and Why Every OneKey Has One)](https://keybored.club/journal/nfc-tags-explained/): An NFC tag is a tiny chip and antenna with no battery. Your phone powers it from a few centimeters away and reads a link. Here's how it works and what it does in OneKey.
+- [How Small-Batch Pre-Orders Work](https://keybored.club/journal/how-small-batch-preorders-work/): Small makers use pre-orders to build exactly what people order. Here's what that means for timelines, payment, and what to look for before you buy.
+
+## Pre-orders
+- [How pre-orders work](https://keybored.club/preorder/): everything ships as a pre-order; estimated Spring 2027 (estimated).
