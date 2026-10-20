@@ -1,27 +1,43 @@
 # keybored.club
 
-Static site for GitHub Pages. Every page is its own URL with full content, so search engines and AI answer engines can read it.
+Static site for GitHub Pages: 17 pages, each with its own URL, plus a pre-order bag and a not-found page.
+
+## Upload (do this on a computer, not a phone)
+Phones and Safari quietly drop folders when uploading to GitHub. That's what broke the last upload.
+
+1. Unzip this file. Open the `keybored.club` folder.
+2. In Chrome or Edge, open the repo on GitHub and click **Add file → Upload files**.
+3. Select everything *inside* the folder (folders included) and drag it onto the page. Commit.
+4. **Check it worked:** the repo's main page should list these folders:
+   `assets`, `bag`, `batch-001`, `journal`, `onekey`, `onekey-pro`, `preorder`, `press`, `shop`, `waitlist`.
+   Open `assets` → `js` and you should see `site.js` and `config.js`. If any folder is missing, drag that folder in again.
+5. Wait about a minute, then open keybored.club/shop/ on your phone. If it loads, you're live.
+
+Tip: if the `.nojekyll` file doesn't show up after uploading (hidden files sometimes get skipped), click **Add file → Create new file**, name it `.nojekyll`, type anything, and commit.
+
+## Optional cleanup: old leftover files
+An earlier upload put copies of these at the top level of the repo. The new site doesn't use them. They're harmless, but you can delete each one (open the file → ⋯ → Delete file):
+`app.js`, `intro.js`, `shopviewer.js`, `studio.js`, `site.css`, `catalog.json`, `models.json`,
+`OrbitControls.js`, `three.min.js`, `SpaceGrotesk.ttf`, `kb.png`, `nested.png`, `screw.png`, `solid.png`, `stack.png`, `lineup.jpg`, `og.jpg`
+(Only the ones at the top level. Keep everything inside `assets/`.)
+Also safe to delete: `assets/shop/catalog.json`, `assets/shop/img/kb.png`, `screw.png`, `stack.png`.
+
+## Sign-ups with Airtable (about 10 minutes)
+1. In Airtable, create a base called **Key Bored** with a table called **Signups** and these fields:
+   `Email` (Email), `List` (Single line text), `Page` (Single line text), `Notes` (Long text, optional).
+2. Add a **Form** view. Put `Email`, `List`, `Page`, and `Notes` on it, and make `Email` required.
+3. Click **Share form**, turn sharing on, and copy the link (`https://airtable.com/appXXXX/shrYYYY/form`).
+4. Open `assets/js/config.js`, replace `PASTE_YOUR_AIRTABLE_FORM_LINK` with that link, and upload that one file.
+
+Every sign-up box then shows your Airtable form, with `List` (waitlist, newsletter, or press) and `Page` filled in and hidden.
+Until the link is in, the boxes still work but only save on the visitor's own device.
+
+## Google Search Console (once)
+1. search.google.com/search-console → **Add property** → **Domain** → `keybored.club`.
+2. Copy the `google-site-verification=` TXT code. In Cloudflare: **DNS → Records → Add record**, type **TXT**, name `@`, paste it, save.
+3. Click **Verify**, then **Sitemaps** → enter `sitemap.xml` → **Submit**.
+4. Bing: bing.com/webmasters → **Import from Google Search Console**.
 
 ## Pages
-- `/` home · `/shop/` · `/onekey/` · `/onekey-pro/`
-- `/batch-001/` (campaign landing) · `/waitlist/` (sign-up landing) · `/press/` (press kit)
-- `/journal/` + 8 articles · `/preorder/` · `/bag/`
-- `sitemap.xml`, `robots.txt`, `llms.txt` (a summary for AI assistants), `CNAME`
-
-## Update the live site
-1. In the GitHub repo, delete the old `assets` folder and old `index.html` (keep `CNAME`), then upload everything in this folder.
-2. GitHub republishes in about a minute.
-
-## Turn on sign-ups (5 minutes, free)
-1. Create a free account at formspree.io and make a new form.
-2. Copy its ID (the part after `/f/`, like `xyzabcd`).
-3. Open `assets/js/config.js` and replace `YOUR_FORM_ID` with it. Upload that one file.
-Every form on the site (waitlist, newsletter, press) then lands in your Formspree inbox, tagged by list. Until then, forms work but only save on the visitor's device.
-
-## Get indexed
-1. Google Search Console: add `keybored.club` as a Domain property and verify with the TXT record it gives you (add it in Cloudflare DNS).
-2. Submit `https://keybored.club/sitemap.xml`.
-3. Bing Webmaster Tools: import from Search Console.
-
-## Edit content
-Pages are generated, but you can edit any `index.html` directly. Prices, colors, and ship estimate appear in the product pages, `/preorder/`, and the structured data at the top of each page.
+`/` · `/shop/` · `/onekey/` · `/onekey-pro/` · `/batch-001/` · `/waitlist/` · `/press/` · `/journal/` + 8 Shop Notes articles · `/preorder/` · `/bag/`
+Plus `sitemap.xml`, `robots.txt`, `llms.txt`, `CNAME`, `.nojekyll`, `404.html`.

@@ -1,4 +1,4 @@
-// Key Bored product viewer: one product, customer view.
+// Key Bored product viewer: one product. Tap the keycap to press it; drag to turn; it eases home after 5 s.
 (function () {
   function create(host, D, KD, init) {
     const lin = (h) => new THREE.Color(h).convertSRGBToLinear();
@@ -22,9 +22,11 @@
     const stars = new THREE.Points(new THREE.BufferGeometry().setAttribute('position', new THREE.Float32BufferAttribute(sp, 3)), new THREE.PointsMaterial({ color: 0xcfd8ff, size: 2, sizeAttenuation: false, transparent: true, opacity: .8 }));
     scene.add(stars);
     const controls = new THREE.OrbitControls(camera, renderer.domElement);
-    Object.assign(controls, { enableDamping: true, dampingFactor: .08, enablePan: false, minDistance: 30, maxDistance: 4000, rotateSpeed: .8, autoRotate: true, autoRotateSpeed: 0.6 });
-    let idle = null; controls.addEventListener('start', () => { controls.autoRotate = false; clearTimeout(idle); });
-    controls.addEventListener('end', () => { clearTimeout(idle); idle = setTimeout(() => { controls.autoRotate = true; }, 5000); });
+    Object.assign(controls, { enableDamping: true, dampingFactor: .08, enablePan: false, minDistance: 30, maxDistance: 4000, rotateSpeed: .8, autoRotate: false });
+    let lastTouch = performance.now(), atHome = true;
+    controls.addEventListener('start', () => { lastTouch = performance.now(); atHome = false; glide = null; });
+    controls.addEventListener('change', () => { if (controls.__dragging) lastTouch = performance.now(); });
+    controls.addEventListener('end', () => { lastTouch = performance.now(); });
     const dec = (b, T) => { const x = atob(b), u = new Uint8Array(x.length); for (let i = 0; i < x.length; i++) u[i] = x.charCodeAt(i); return new T(u.buffer); };
     const decPos = (m) => { const q = dec(m.pos, Uint16Array), o = new Float32Array(q.length), s = m.q; for (let i = 0; i < q.length; i++) { const a = i % 3; o[i] = s[a] + q[i] * s[3 + a]; } return o; };
     const COLORS = window.KB_COLORS;
@@ -99,7 +101,7 @@
       if (p.prod === 'acc_case_m') return st.case && METAL_LINE.includes(st.prod);
       if (p.prod === 'acc_tether') return st.tether && CASEABLE.includes(st.prod);
       if (p.prod === 'acc_mat') return st.mat;
-      if (p.prod === 'shared') return !isCap(p) || (st.keycap === 'gmk' ? p.name.endsWith('gmk') : p.name.endsWith('1k'));
+      if (p.prod === 'shared') return !isCap(p) || p.name.endsWith('gmk');
       return p.prod === st.prod;
     }
     function paint() {
@@ -140,37 +142,66 @@
     function fitDist(r) { const vh = THREE.MathUtils.degToRad(camera.fov) / 2, hh = Math.atan(Math.tan(vh) * camera.aspect); return r / Math.sin(Math.min(vh, hh)) * 1.02; }
     const VIEW = { kb: [-0.35, 0.62] }, DEF = [-0.72, 0.36];
     function place(f, az, el) { const d = fitDist(f.radius); controls.target.copy(f.center); camera.position.set(f.center.x + Math.sin(az) * Math.cos(el) * d, f.center.y + Math.sin(el) * d, f.center.z + Math.cos(az) * Math.cos(el) * d); controls.update(); }
-    function home() { const v = VIEW[st.prod] || DEF; place(frameFor(st.exploded ? 1 : 0), v[0], v[1]); }
+    function homePose() { const v = VIEW[st.prod] || DEF, f = frameFor(st.exploded ? 1 : 0), d = fitDist(f.radius);
+      return { t: f.center.clone(), p: new THREE.Vector3(f.center.x + Math.sin(v[0]) * Math.cos(v[1]) * d, f.center.y + Math.sin(v[1]) * d, f.center.z + Math.cos(v[0]) * Math.cos(v[1]) * d) }; }
+    function home() { const h = homePose(); controls.target.copy(h.t); camera.position.copy(h.p); controls.update(); atHome = true; }
+    let ret = null;
+    function returnHome() {
+      controls.enableDamping = false; controls.update(); controls.enableDamping = true;   // flush leftover drag momentum so it can't drift after the glide
+      const h = homePose(), s0 = new THREE.Spherical().setFromVector3(camera.position.clone().sub(controls.target)), s1 = new THREE.Spherical().setFromVector3(h.p.clone().sub(h.t));
+      let dth = s1.theta - s0.theta; if (dth > Math.PI) dth -= 2 * Math.PI; if (dth < -Math.PI) dth += 2 * Math.PI;
+      ret = { t0: performance.now(), a: controls.target.clone(), b: h.t, s0, s1, dth };
+    }
     let glide = null;
     function refit() { const f = frameFor(st.exploded ? 1 : 0); glide = { t0: performance.now(), a: controls.target.clone(), b: f.center, d0: camera.position.distanceTo(controls.target), d1: fitDist(f.radius) }; }
     const ease = (x) => x < .5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2;
     paint(); home();
     let actx = null;
-    function click(t0) {
+    function click(t0, soft) {
       try { actx = actx || new (window.AudioContext || window.webkitAudioContext)(); if (actx.state === 'suspended') actx.resume();
         const t = actx.currentTime + (t0 || 0), n = actx.createBuffer(1, actx.sampleRate * 0.03, actx.sampleRate), d = n.getChannelData(0);
         for (let i = 0; i < d.length; i++) d[i] = (Math.random() * 2 - 1) * Math.exp(-i / (actx.sampleRate * 0.004));
         const src = actx.createBufferSource(); src.buffer = n; const bp = actx.createBiquadFilter(); bp.type = 'bandpass'; bp.frequency.value = 3800; bp.Q.value = 0.9;
-        const gn = actx.createGain(); gn.gain.value = 0.9; src.connect(bp).connect(gn).connect(actx.destination); src.start(t);
+        const gn = actx.createGain(); gn.gain.value = soft ? 0.38 : 0.9; src.connect(bp).connect(gn).connect(actx.destination); src.start(t);
         const o = actx.createOscillator(), og = actx.createGain(); o.frequency.setValueAtTime(190, t); o.frequency.exponentialRampToValueAtTime(80, t + 0.09);
-        og.gain.setValueAtTime(0.5, t); og.gain.exponentialRampToValueAtTime(0.001, t + 0.12); o.connect(og).connect(actx.destination); o.start(t); o.stop(t + 0.13);
+        og.gain.setValueAtTime(soft ? 0.12 : 0.5, t); og.gain.exponentialRampToValueAtTime(0.001, t + 0.12); o.connect(og).connect(actx.destination); o.start(t); o.stop(t + 0.13);
       } catch (e) { /* no audio */ }
     }
+    const ray = new THREE.Raycaster(), ndc = new THREE.Vector2();
+    let keyDown = false, keyTarget = 0, keyX = 0, keyV = 0;
+    const capMeshes = () => P.filter((p) => p.press && p.mesh.visible).map((p) => p.mesh);
+    function hitKey(ev) {
+      const r = renderer.domElement.getBoundingClientRect(); ndc.set(((ev.clientX - r.left) / r.width) * 2 - 1, -((ev.clientY - r.top) / r.height) * 2 + 1);
+      ray.setFromCamera(ndc, camera); return ray.intersectObjects(capMeshes(), false).length > 0;
+    }
+    renderer.domElement.addEventListener('pointerdown', (ev) => {
+      lastTouch = performance.now(); ret = null;
+      if (st.exploded || !hitKey(ev)) { controls.__dragging = true; return; }
+      keyDown = true; keyTarget = 1; controls.enabled = false; click(0); if (navigator.vibrate) navigator.vibrate(8);
+    }, { capture: true });
+    const release = () => { controls.__dragging = false; if (!keyDown) return; keyDown = false; keyTarget = 0; controls.enabled = true; click(0.0, true); lastTouch = performance.now(); };
+    addEventListener('pointerup', release); addEventListener('pointercancel', release);
     let alive = true;
-    function loop(now) {
+    function loop() { const now = performance.now();   // one clock for touches and frames
       if (!alive) return;
       const target = st.exploded ? 1 : 0; k += (target - k) * 0.09; if (Math.abs(target - k) < 1e-3) k = target;
       if (glide) { const u = Math.min(1, (now - glide.t0) / 900), e = ease(u); controls.target.copy(glide.a).lerp(glide.b, e); const dir = camera.position.clone().sub(controls.target).normalize(); camera.position.copy(controls.target).add(dir.multiplyScalar(glide.d0 + (glide.d1 - glide.d0) * e)); if (u >= 1) glide = null; }
-      let pr = 0; if (pressT >= 0) { const t = (now - pressT) / 1000; if (t < .07) pr = t / .07; else if (t < .12) pr = 1; else if (t < .38) { const u = (t - .12) / .26; pr = 1 - u * u * (3 - 2 * u) + .06 * Math.sin(u * Math.PI); } else if (st.prod !== 'kb' || t > 0.4 + (KB ? KB.n : 0) * 0.012) pressT = -1; }
+      const dt = 1 / 60, K = keyTarget > keyX ? 2600 : 1400, C = keyTarget > keyX ? 95 : 48;   // fast down, quick sprung return
+      keyV += (K * (keyTarget - keyX) - C * keyV) * dt; keyX += keyV * dt; if (keyX > 1) { keyX = 1; keyV = 0; } const pr = keyX;
+      if (!atHome && !keyDown && !controls.__dragging && !ret && !glide && now - lastTouch > 5000) returnHome();
+      if (ret) { const u = Math.min(1, (now - ret.t0) / 1400), e = ease(u);
+        controls.target.copy(ret.a).lerp(ret.b, e);
+        const sp = new THREE.Spherical(ret.s0.radius + (ret.s1.radius - ret.s0.radius) * e, ret.s0.phi + (ret.s1.phi - ret.s0.phi) * e, ret.s0.theta + ret.dth * e);
+        camera.position.copy(controls.target).add(new THREE.Vector3().setFromSpherical(sp)); if (u >= 1) { ret = null; atHome = true; } }
       let mx = 1; P.forEach((p) => { if (p.mesh.visible) mx = Math.max(mx, Math.abs(exOf(p))); });
       P.forEach((p) => { p.mesh.position.z = exOf(p) * stag(k, exOf(p), mx) + zOf(p) + (p.press ? -4 * pr : 0); const tc = p.mesh.material.userData.tc; if (tc) p.mesh.material.color.lerp(tc, 0.12); });
       if (KB) { if (st.prod === 'kb') kbPose(k, now); ['block', 'acc', 'stem'].forEach((n) => { const tc = KB.mats[n].userData.tc; if (tc) KB.mats[n].color.lerp(tc, 0.12); }); }
-      stars.rotation.y += 0.0003; controls.update(); renderer.render(scene, camera); requestAnimationFrame(loop);
+      stars.rotation.y += 0.0003; if (!ret) controls.update(); renderer.render(scene, camera); requestAnimationFrame(loop);
     }
     requestAnimationFrame(loop);
     return {
       set(o) { const prev = Object.assign({}, st); Object.assign(st, o); paint(); if (o.prod && o.prod !== prev.prod) { glide = null; home(); } else if (['exploded', 'case', 'mat', 'tether'].some((k2) => k2 in o && o[k2] !== prev[k2])) refit(); },
-      press() { pressT = performance.now(); if (st.prod === 'kb') { for (let i = 0; i < 14; i++) click(i * 0.05); } else { click(0); click(0.13); } if (navigator.vibrate) navigator.vibrate(12); },
+      press() { keyTarget = 1; click(0); setTimeout(() => { keyTarget = 0; click(0, true); }, 110); },
       reset() { glide = null; home(); },
       snap(o) { Object.assign(st, o || {}); k = st.exploded ? 1 : 0; paint(); P.forEach((p) => { const tc = p.mesh.material.userData.tc; if (tc) p.mesh.material.color.copy(tc); }); resize(); home(); controls.autoRotate = false; renderer.render(scene, camera); },
       dispose() { alive = false; ro.disconnect(); renderer.dispose(); host.replaceChildren(); },
